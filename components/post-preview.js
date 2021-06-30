@@ -1,4 +1,5 @@
 import DateFormatter from '../components/date-formatter'
+import Author from '../components/author'
 import CoverImage from './cover-image'
 import Link from 'next/link'
 
@@ -28,6 +29,7 @@ export default function PostPreview({
       </h3>
       <div className="text-lg mb-4">
         <DateFormatter dateString={date} />
+        <Author name={author} />
       </div>
       <p className="text-lg leading-relaxed mb-4">{excerpt}</p>
     </div>

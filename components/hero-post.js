@@ -1,4 +1,5 @@
 import DateFormatter from '../components/date-formatter'
+import Author from '../components/author'
 import CoverImage from '../components/cover-image'
 import Link from 'next/link'
 
@@ -30,6 +31,7 @@ export default function HeroPost({
           </h3>
           <div className="">
             <DateFormatter dateString={date} />
+            <Author name={author} />
           </div>
         </div>
         <div>
