@@ -2,11 +2,11 @@
   "name": "nextjs-test",
   "version": "0.1.0",
   "private": true,
-  "export": "next build && next export",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "export": "next build && next export",
     "lint": "next lint"
   },
   "dependencies": {
