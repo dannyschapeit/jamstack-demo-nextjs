@@ -1,38 +1,83 @@
 import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
-import React from 'react'
-import matter from 'gray-matter'
-import ReactMarkdown from "react-markdown";
+import Container from '../../components/container'
+import PostBody from '../../components/post-body'
+import Header from '../../components/header'
+import PostHeader from '../../components/post-header'
+import Layout from '../../components/layout'
+import { getPostBySlug, getAllPosts } from '../../lib/api'
+import PostTitle from '../../components/post-title'
+import Head from 'next/head'
+import { CMS_NAME, COMPANY_NAME } from '../../lib/constants'
+import markdownToHtml from '../../lib/markdownToHtml'
 
-
-function PostTemplate({ content, data }) {
-  // This holds the data between `---` from the .md file
-  const frontmatter = data
+export default function Post({ post, morePosts, preview }) {
   const router = useRouter()
+  if (!router.isFallback && !post?.slug) {
+    return <ErrorPage statusCode={404} />
+  }
   return (
-    <>
-      <h1>{frontmatter.title}</h1>
-      <img src={frontmatter.coverImage} />
-      <p>Createt on: {frontmatter.date}</p>
-      <p>Post by: {frontmatter.author}</p>
-      <ReactMarkdown children={content} />
-    </>
+    <Layout preview={preview}>
+      <Container>
+        <Header />
+        {router.isFallback ? (
+          <PostTitle>Loading…</PostTitle>
+        ) : (
+          <>
+            <article className="mb-32">
+              <Head>
+                <title>
+                  {post.title} | {COMPANY_NAME}
+                </title>
+              </Head>
+              <PostHeader
+                title={post.title}
+                coverImage={post.coverImage}
+                date={post.date}
+                author={post.author}
+              />
+              <PostBody content={post.content} />
+            </article>
+          </>
+        )}
+      </Container>
+    </Layout>
   )
 }
 
-PostTemplate.getInitialProps = async (context) => {
-  const { slug } = context.query
-  
-  // Import our .md file using the `slug` from the URL
-  const content = await import(`../../_posts/${slug}.md`)
-  
-  // Parse .md data through `matter`
-  const data = matter(content.default)
-  
-  // Pass data to our component props
-  return { ...data }
+export async function getStaticProps({ params }) {
+  const post = getPostBySlug(params.slug, [
+    'title',
+    'date',
+    'slug',
+    'author',
+    'content',
+    'ogImage',
+    'coverImage',
+  ])
+  const content = await markdownToHtml(post.content || '')
 
-  return { slug }
+  return {
+    props: {
+      post: {
+        ...post,
+        content,
+      },
+    },
+  }
 }
 
-export default PostTemplate
+export async function getStaticPaths() {
+  const posts = getAllPosts(['slug'])
+
+  return {
+    paths: posts.map((post) => {
+      return {
+        params: {
+          slug: post.slug,
+        },
+      }
+    }),
+    fallback: false,
+  }
+}
