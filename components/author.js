@@ -1,8 +1,6 @@
-export default function Author({ name, picture }) {
+export default function Author({ name }) {
     return (
-      <div className="flex items-center">
-        <div className="text-xl font-bold">{name}</div>
-      </div>
+      <p>{name}</p>
     )
   }
   

@@ -1,6 +1,7 @@
 import DateFormatter from '../components/date-formatter'
 import CoverImage from '../components/cover-image'
 import PostTitle from '../components/post-title'
+import Author from '../components/author'
 
 export default function PostHeader({ title, coverImage, date, author }) {
   return (
@@ -12,6 +13,7 @@ export default function PostHeader({ title, coverImage, date, author }) {
       <div className="max-w-2xl mx-auto">
         <div className="mb-6 text-lg">
           <DateFormatter dateString={date} />
+          <Author dataString={author} />
         </div>
       </div>
     </>
